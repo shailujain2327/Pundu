@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Special One ❤️ | Happy Birthday Swati</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #fecfef 0%, #ff9a9e 100%);
+            overflow: hidden; 
+        }
+
+        /* Bada Laptop Size Box */
+        .screen {
+            display: none; 
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 60px 40px; /* Badi padding */
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(255, 105, 135, 0.4);
+            text-align: center;
+            max-width: 850px; /* Laptop ke liye width bada di */
+            width: 80%;
+            border: 5px solid #ffb6c1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Bada Animated Emoji */
+        .cute-emoji {
+            font-size: 140px; /* Laptop ke liye bada size */
+            margin-bottom: 20px;
+            animation: floatEmoji 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes floatEmoji {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(8deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* Bade Fonts */
+        h1 { color: #ff4757; font-size: 3.5rem; margin-bottom: 15px; }
+        h2 { color: #d6336c; font-size: 2.5rem; margin-bottom: 20px; }
+        p { color: #555; font-size: 1.5rem; line-height: 1.6; margin-bottom: 35px; }
+
+        /* Bade Buttons */
+        .btn {
+            padding: 16px 50px;
+            font-size: 22px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            transition: transform 0.2s;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-start { background-color: #ff4757; color: white; }
+        .btn-start:hover { background-color: #ff6b81; transform: scale(1.08); }
+
+        .btn-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            min-height: 80px;
+        }
+
+        .btn-good { background-color: #2ed573; color: white; z-index: 10; }
+        .btn-good:hover { transform: scale(1.15); background-color: #26de81; }
+
+        .btn-bad {
+            background-color: #ff4757;
+            color: white;
+            position: relative;
+            z-index: 99999; 
+            transition: none; 
+        }
+
+        /* Note Design for Laptop */
+        .love-note {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px dashed #ff4757;
+            margin-top: 30px;
+        }
+        
+        .love-note h3 {
+            font-size: 2.2rem;
+            color: #ff4757;
+            margin: 15px 0;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.1); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hidden Audio Player for Birthday Music -->
+    <audio id="bday-music" src="music.mp3" preload="auto"></audio>
+
+    <!-- Phase 1: Romantic Intro -->
+    <div id="intro-screen" class="screen active">
+        <div class="cute-emoji">💌</div>
+        <h2>Hello My Love! ❤️</h2>
+        <p>Aage badhne se pehle tumhe mere kuch bohot zaroori sawalon ke jawab dene honge. Ready?</p>
+        <button class="btn btn-start" onclick="startQuestions()">Let's Go! ✨</button>
+    </div>
+
+    <!-- Phase 2: 12 Questions -->
+    <div id="question-screen" class="screen">
+        <div class="cute-emoji" id="question-emoji">🥺</div>
+        <h2 id="question-text">Question will appear here</h2>
+        <div class="btn-container">
+            <button class="btn btn-good" id="good-btn" onclick="nextQuestion()">Yes</button>
+            <button class="btn btn-bad" id="bad-btn" onmouseover="teleportButton()" ontouchstart="teleportButton()" onclick="catchMe()">No</button>
+        </div>
+    </div>
+
+    <!-- Phase 3: The Birthday Surprise -->
+    <div id="surprise-screen" class="screen">
+        <h1>🎉 Happy Birthday! 🎉</h1>
+        <div class="cute-emoji">🎂</div>
+        <div class="love-note">
+            <p>Mujhe pata tha tum saare jawab mere favour mein hi dogi! Wishing you the most amazing, beautiful, and happiest birthday ever.</p>
+            <h3>Love u Miss Swati Singhai ❤️</h3>
+        </div>
+    </div>
+
+    <script>
+        // Har question ke sath ek matching cute emoji
+        const questions = [
+            { q: "Tell me honestly, do you love me?", good: "Bohot zyada! ❤️", bad: "Nahi 😒", emoji: "🥺" },
+            { q: "Am I the cutest person you've ever met?", good: "Obviously! 🥺", bad: "Kisne kaha? 😂", emoji: "🥰" },
+            { q: "Do you miss me right now?", good: "Har pal! 😭", bad: "Thoda sa bhi nahi 😝", emoji: "🕰️" },
+            { q: "Am I your favorite headache?", good: "Haan baba 🤕💖", bad: "Nahi 🙅‍♀️", emoji: "🤕" },
+            { q: "Kya tm Pundu Ho?", good: "Haan mai Pundu hu! 🥺", bad: "Nahi toh! 😒", emoji: "🐼" },
+            { q: "Kya Tm Pundu Pur Ki Maharani ho?", good: "Ji Maharaj! 👑", bad: "Hatt! 😂", emoji: "👑" },
+            { q: "Can you live a single day without me?", good: "Nahi bilkul nahi! 🥺", bad: "Haan aaram se! 😎", emoji: "💔" },
+            { q: "Will you tolerate my tantrums forever?", good: "Zindagi bhar! 🥰", bad: "Nahi bhai 🙏", emoji: "😤" },
+            { q: "Am I the best thing that happened to you?", good: "100% Yes! ✨", bad: "Galat fehmi 🤭", emoji: "🌟" },
+            { q: "Meri smile se tumhara din ban jata hai?", good: "Haan sacchi! 😍", bad: "Kuch bhi! 🙄", emoji: "😁" },
+            { q: "Mujhe humesha aise hi pyaar karogi?", good: "Humesha! 💕", bad: "Sochna padega 🤔", emoji: "🫂" },
+            { q: "Are you ready for your birthday surprise now?", good: "Yesss Show Me! 🎉", bad: "Not interested 😴", emoji: "🎁" }
+        ];
+
+        let currentQuestion = 0;
+
+        function startQuestions() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('question-screen').classList.add('active');
+            
+            // Audio ready karna taaki block na ho
+            let bgMusic = document.getElementById('bday-music');
+            bgMusic.load();
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestion < questions.length) {
+                document.getElementById('question-text').innerText = questions[currentQuestion].q;
+                document.getElementById('good-btn').innerText = questions[currentQuestion].good;
+                
+                let badBtn = document.getElementById('bad-btn');
+                badBtn.innerText = questions[currentQuestion].bad;
+                
+                // Reset bad button position
+                badBtn.style.position = 'relative';
+                badBtn.style.left = 'auto';
+                badBtn.style.top = 'auto';
+
+                // Emoji dynamically change
+                document.getElementById('question-emoji').innerText = questions[currentQuestion].emoji;
+
+            } else {
+                triggerSurprise();
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        // Teleport Logic (Optimized for Laptop Screen)
+        function teleportButton() {
+            const btn = document.getElementById('bad-btn');
+            btn.style.position = 'fixed';
+            
+            const safeMarginX = btn.offsetWidth + 50;
+            const safeMarginY = btn.offsetHeight + 50;
+            
+            const maxX = window.innerWidth - safeMarginX;
+            const maxY = window.innerHeight - safeMarginY;
+            
+            const randomX = Math.max(30, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(30, Math.floor(Math.random() * maxY));
+
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+        }
+
+        function catchMe() {
+            alert("Pakka? 🥺 Ek baar fir soch lo, varna aage nahi badhne dungi!");
+        }
+
+        function triggerSurprise() {
+            document.getElementById('question-screen').classList.remove('active');
+            document.getElementById('surprise-screen').classList.add('active');
+            
+            // Music Play
+            try {
+                document.getElementById('bday-music').play();
+            } catch (err) {
+                console.log("Auto-play was blocked. User interaction might be needed.");
+            }
+            
+            // Confetti Blast (Thoda heavy kiya laptop ke liye)
+            var duration = 5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 15, angle: 60, spread: 80, origin: { x: 0 }, colors: ['#ff4757', '#ffb6c1', '#ffffff'] });
+                confetti({ particleCount: 15, angle: 120, spread: 80, origin: { x: 1 }, colors: ['#ff4757', '#ffb6c1', '#ffffff'] });
+
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+    </script>
+</body>
+</html>
